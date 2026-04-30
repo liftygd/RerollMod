@@ -356,7 +356,11 @@ public class RerollMod : MewgenicsMod
                     var cat = cats[i];
                     cat.Spell1 = RandomSpell(cats[i].ClassName.ToLower());
                     cat.Passive0 = RandomPassive(cats[i].ClassName.ToLower());
-                    // todo: убрать повторы, счетчик срабатываний
+                    /* todo: 
+                    убрать повторы,
+                    бинды через конфиг,
+                    выводить цифру(в имя кота, стартовое -1, чтобы после первого реролла было 0)
+                    */
                 }
             }
 
