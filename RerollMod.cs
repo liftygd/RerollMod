@@ -347,34 +347,49 @@ public class RerollMod : MewgenicsMod
     protected void OnKeyDown(KeyEventArgs e)
     {
         if (!IsEnabled) return;
-        if (e.Scancode == SDL_Scancode.P && !e.IsRepeat && !inFight)
+        if ((e.Scancode == SDL_Scancode.P || e.Scancode == SDL_Scancode.O) && !e.IsRepeat && !inFight)
         {
-            log("🔵 [Reroll] Клавиша нажата!");
+            log($"🔵 [Reroll] Клавиша {e.Key} нажата! (18 = O, 19 = P)");
             List<GameChar> cats = GameWorld.Current.GetCats();
             for (int i = 0; i < cats.Count; i++)
             {
-                if (cats[i].IsInAdventureParty)
-                {
-                    
-                    var cat = cats[i];
-                    cat.Spell1 = RandomSpell(cats[i].ClassName.ToLower());
-                    cat.Passive0 = RandomPassive(cats[i].ClassName.ToLower());
+                if (!cats[i].IsInAdventureParty)
+                    cats.RemoveAt(i);
+            }
 
-                    if (rolledCats.Contains(cat))
-                    {
-                        cat.Name = Convert.ToString(Convert.ToInt32(cat.Name) + 1);
-                    } else
-                    {
-                        cat.Name = "0";
-                        rolledCats.Add(cat);
-                    }
-                    
-                    /* todo: 
-                    убрать повторы,
-                    бинды через конфиг,
-                    выводить цифру(в имя кота, стартовое -1, чтобы после первого реролла было 0)
-                    */
+            if (e.Scancode == SDL_Scancode.O)
+            {
+                var cat = cats[0];
+                cat.Spell1 = RandomSpell(cat.ClassName.ToLower());
+                cat.Passive0 = RandomPassive(cat.ClassName.ToLower());
+
+                if (rolledCats.Contains(cat))
+                {
+                    cat.Name = Convert.ToString(Convert.ToInt32(cat.Name) + 1);
                 }
+                else
+                {
+                    cat.Name = "0";
+                    rolledCats.Add(cat);
+                }
+
+            }
+            else if (e.Scancode == SDL_Scancode.P)
+            {
+                var cat = cats[1];
+                cat.Spell1 = RandomSpell(cat.ClassName.ToLower());
+                cat.Passive0 = RandomPassive(cat.ClassName.ToLower());
+
+                if (rolledCats.Contains(cat))
+                {
+                    cat.Name = Convert.ToString(Convert.ToInt32(cat.Name) + 1);
+                }
+                else
+                {
+                    cat.Name = "0";
+                    rolledCats.Add(cat);
+                }
+
             }
 
         }
