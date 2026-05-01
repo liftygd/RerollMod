@@ -28,6 +28,8 @@ public class RerollMod : MewgenicsMod
     private bool inFight = false;
     private Random random = new Random();
 
+    private List<GameChar> rolledCats = new List<GameChar>();
+
     Dictionary<string, List<string>> abilities = new Dictionary<string, List<string>>();
     Dictionary<string, List<string>> passives = new Dictionary<string, List<string>>();
 
@@ -322,6 +324,7 @@ public class RerollMod : MewgenicsMod
         if (!IsEnabled) return;
         log("adventure return triggered");
         inFight = false;
+        rolledCats = new List<GameChar>();
     }
 
     private void OnAdventureStart(AdventureStartEvent @event)
@@ -356,6 +359,16 @@ public class RerollMod : MewgenicsMod
                     var cat = cats[i];
                     cat.Spell1 = RandomSpell(cats[i].ClassName.ToLower());
                     cat.Passive0 = RandomPassive(cats[i].ClassName.ToLower());
+
+                    if (rolledCats.Contains(cat))
+                    {
+                        cat.Name = Convert.ToString(Convert.ToInt32(cat.Name) + 1);
+                    } else
+                    {
+                        cat.Name = "0";
+                        rolledCats.Add(cat);
+                    }
+                    
                     /* todo: 
                     убрать повторы,
                     бинды через конфиг,
