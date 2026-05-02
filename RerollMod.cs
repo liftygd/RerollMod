@@ -25,7 +25,7 @@ public class RerollMod : MewgenicsMod
         if (logging) Log(message);
     }
 
-    private bool inFight = false;
+    //private bool inFight = false;
     private Random random = new Random();
 
     Dictionary<string, List<string>> abilities = new Dictionary<string, List<string>>();
@@ -321,14 +321,14 @@ public class RerollMod : MewgenicsMod
     {
         if (!IsEnabled) return;
         log("adventure return triggered");
-        inFight = false;
+        //inFight = false;
     }
 
     private void OnAdventureStart(AdventureStartEvent @event)
     {
         if (!IsEnabled) return;
         log("adventure start triggered");
-        inFight = true;
+        //inFight = true;
     }
 
     protected override void OnEnable()
@@ -371,7 +371,7 @@ public class RerollMod : MewgenicsMod
     protected void OnKeyDown(KeyEventArgs e)
     {
         if (!IsEnabled) return;
-        if ((e.Scancode == SDL_Scancode.P || e.Scancode == SDL_Scancode.O) && !e.IsRepeat && !inFight)
+        if ((e.Scancode == SDL_Scancode.P || e.Scancode == SDL_Scancode.O) && !e.IsRepeat)
         {
             log($"🔵 [Reroll] Клавиша {e.Key} нажата! (111 = O, 112 = P)");
             List<GameChar> cats = GameWorld.Current.GetCats(); // get all alive cats
