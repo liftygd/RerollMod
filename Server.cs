@@ -22,13 +22,13 @@ class Server()
             return;
     }
 
-    private string CreateCatStateCall(Guid id, long catId, string className,
+    private string CreateCatStateCall(Guid id, string name, long catId, string className,
         string spell0, string spell1, string spell2, string spell3,
         string passive0, string passive1, string disorder0, string disorder1)
     {
         string? ToJsonValue(string? value) => string.IsNullOrEmpty(value) ? null : $"\"{value}\"";
 
-        string call = $"{{\"id\":\"{id}\",\"catId\":\"{catId}\",\"className\":\"{className}\"," +
+        string call = $"{{\"id\":\"{id}\",\"name\":\"{name}\",\"catId\":\"{catId}\",\"className\":\"{className}\"," +
                       $"\"abilities\":[{{\"id\":1,\"name\":{ToJsonValue(spell0)}}},{{\"id\":2,\"name\":{ToJsonValue(spell1)}}}," +
                       $"{{\"id\":3,\"name\":{ToJsonValue(spell2)}}},{{\"id\":4,\"name\":{ToJsonValue(spell3)}}}]," +
                       $"\"passives\":[{{\"id\":1,\"name\":{ToJsonValue(passive0)}}},{{\"id\":2,\"name\":{ToJsonValue(passive1)}}}]," +
@@ -37,9 +37,9 @@ class Server()
         return call;
     }
 
-    public string CreateCatState(Guid id, GameChar cat)
+    public string CreateCatState(Guid id, string name, GameChar cat)
     {
-        return CreateCatStateCall(id, cat.CatId, cat.ClassName, cat.Spell0, cat.Spell1, cat.Spell2, cat.Spell3,
+        return CreateCatStateCall(id, name, cat.CatId, cat.ClassName, cat.Spell0, cat.Spell1, cat.Spell2, cat.Spell3,
             cat.Passive0, cat.Passive1, cat.Disorder0, cat.Disorder1);
     }
 

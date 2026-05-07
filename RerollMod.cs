@@ -471,7 +471,11 @@ public class RerollMod : MewgenicsMod
 
     private void UpdateCatOnServer(GameChar cat)
     {
-        string call = server.CreateCatState(Guid.Parse(Config.GetString("playerId")), cat);
+        string call = server.CreateCatState(
+            Guid.Parse(Config.GetString("playerId")), 
+            Config.GetString("playerName"), 
+            cat);
+        
         log(call);
         
         server.ActivateClient(Config);
