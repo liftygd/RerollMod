@@ -4,3 +4,5 @@ bin
 *.sln
 .git
 .idea
+sdk
+Folder.DotSettings.user

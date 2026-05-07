@@ -3,12 +3,11 @@ using MewgenicsModSdk.Api;
 using MewgenicsModSdk.Game;
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.Linq;
-
+using System.Runtime.InteropServices;
+using System.Text;
 
 namespace RerollMod;
-
 
 public class RerollMod : MewgenicsMod
 {
@@ -19,18 +18,14 @@ public class RerollMod : MewgenicsMod
     public override string Category => "Gameplay";
 
     bool logging = true;
+    public void log(string message) { if (logging) Log(message); }
 
-    void log(string message)
-    {
-        if (logging) Log(message);
-    }
-
-    //private bool inFight = false;
     private Random random = new Random();
+    private Server server = new Server();
+    private bool _runActive;
 
     Dictionary<string, List<string>> abilities = new Dictionary<string, List<string>>();
     Dictionary<string, List<string>> passives = new Dictionary<string, List<string>>();
-
 
     private void loadGon()
     {
@@ -287,134 +282,232 @@ public class RerollMod : MewgenicsMod
             "EnergyFists", "UnburdenedMotion", "UnburdenedStrikes", "UnburdenedThoughts",
             "RunningJab", "PerfectTechnique", "RapidFlow", "CounterBarrage", "FlowState", "DancingLights"
         ];
-
     }
+
     private string RandomSpell(string catClass)
     {
         log("RandomSpell triggered");
         log($"CatClass: {catClass}");
-        string abil = abilities[catClass][random.Next(abilities[catClass].Capacity)];
+        string abil = abilities[catClass][random.Next(abilities[catClass].Count)];
         log(abil);
         return abil;
     }
+
     private string RandomPassive(string catClass)
     {
         log("RandomPassive triggered");
         log($"CatClass: {catClass}");
-        string passive = passives[catClass][random.Next(passives[catClass].Capacity)];
+        string passive = passives[catClass][random.Next(passives[catClass].Count)];
         log(passive);
         return passive;
+    }
+    
+    private string RandomString(int length)
+    {
+        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        return new string(Enumerable.Repeat(chars, length)
+            .Select(s => s[random.Next(s.Length)]).ToArray());
     }
 
     protected override void OnLoad()
     {
         log(Name + " loaded");
         loadGon();
-        GameEvents.OnHouseUpdate += OnFrame;
+        
         GameEvents.OnKeyDown += OnKeyDown;
         GameEvents.OnAdventureStart += OnAdventureStart;
         GameEvents.OnAdventureReturn += OnAdventureReturn;
+        GameEvents.OnFightStart += OnFightStart;
+        GameEvents.OnFightEnd += OnFightEnd;
+        GameEvents.OnHouseUpdate += OnHouseUpdate;
+        
+        _runActive = Config.GetBool("runActive");
+        Config.GetString("playerId", Guid.NewGuid().ToString());
+        Config.GetString("playerName", RandomString(5));
+        Config.GetString("server", string.Empty);
+        Config.GetString("key", string.Empty);
     }
 
+    private void OnHouseUpdate(HouseUpdateEvent @event)
+    {
+        if (!IsEnabled) return;
+        if (!_runActive) return;
+
+        EndRun();
+    }
+
+    private void OnFightStart(FightStartEvent @event)
+    {
+        if (!IsEnabled) return;
+        log("OnFightStart");
+        
+        UpdateCats();
+    }
+    
+    private void OnFightEnd(FightEndEvent @event)
+    {
+        if (!IsEnabled) return;
+        log("OnFightEnd");
+
+        if (@event.Result != FightResult.Lose) 
+            return;
+        
+        EndRun();
+    }
 
     private void OnAdventureReturn(AdventureReturnEvent @event)
     {
         if (!IsEnabled) return;
-        log("adventure return triggered");
-        //inFight = false;
+        log("OnAdventureReturn");
+        
+        EndRun();
     }
 
     private void OnAdventureStart(AdventureStartEvent @event)
     {
         if (!IsEnabled) return;
-        log("adventure start triggered");
-        //inFight = true;
+        log("OnAdventureStart");
+
+        var cats = GetAdventureCats();
+        foreach (var cat in cats)
+            cat.Name = $"{cat.Name} | L";
+        
+        UpdateCats();
+    }
+
+    private void StartRun()
+    {
+        if (_runActive) return;
+        
+        log("Started run");
+        
+        _runActive = true;
+        Config.Set("runActive", _runActive);
+    }
+    
+    private void EndRun()
+    {
+        if (!_runActive) return;
+        
+        log("Ended run");
+        
+        _runActive = false;
+        Config.Set("runActive", _runActive);
+        
+        server.ActivateClient(Config);
+        server.EndRun(Guid.Parse(Config.GetString("playerId")));
+    }
+
+    private void UpdateCats()
+    {
+        StartRun();
+        List<GameChar> cats = GetAdventureCats();
+        
+        for (int i = 0; i < cats.Count; i++)
+        {
+            var cat = cats[i];
+            var catNameComposite = cat.Name.Split(" | ");
+            StringBuilder catName = new StringBuilder();
+            
+            int rollCount = 0;
+            if (catNameComposite.Length >= 2)
+                rollCount = Convert.ToInt32(catNameComposite[1]);
+
+            catName.Append($"{Config.GetString("playerName")} | {rollCount}");
+
+            if (catNameComposite.Length >= 3)
+                catName.Append($" | {catNameComposite[2]}");
+            
+            cat.Name = catName.ToString();
+            UpdateCatOnServer(cat);
+        }
+    }
+
+    private List<GameChar> GetAdventureCats()
+    {
+        List<GameChar> cats = GameWorld.Current.GetCats();
+        for (int i = cats.Count - 1; i >= 0; i--)
+            if (!cats[i].IsInAdventureParty) cats.RemoveAt(i);
+
+        return cats;
     }
 
     protected override void OnEnable()
     {
         log(Name + " enabled");
     }
+    
     protected override void OnDisable()
     {
-        GameEvents.OnKeyDown -= OnKeyDown;
         log(Name + " disabled");
     }
 
     private void RollCat(GameChar cat)
     {
-
+        var catNameComposite = cat.Name.Split(" | ");
+        int rollCount = 0;
+        bool rollLock = catNameComposite is [_, _, "L"];
+            
+        if (rollLock)
+            return;
+        
         string sp = cat.Spell1;
         string pa = cat.Passive0;
 
         string sp_n = RandomSpell(cat.ClassName.ToLower());
         string pa_n = RandomPassive(cat.ClassName.ToLower());
 
-        /* --- avoiding repetitions  --- */
-        while (sp == sp_n)
-            sp_n = RandomSpell(cat.ClassName.ToLower());
-        while (pa == pa_n)
-            pa_n = RandomPassive(cat.ClassName.ToLower());
+        while (sp == sp_n) sp_n = RandomSpell(cat.ClassName.ToLower());
+        while (pa == pa_n) pa_n = RandomPassive(cat.ClassName.ToLower());
 
         cat.Spell1 = sp_n;
         cat.Passive0 = pa_n;
-
-        if (cat.Name.All(char.IsDigit))
-        {
-            cat.Name = Convert.ToString(Convert.ToInt32(cat.Name) + 1);
-        }
-        else
-        {
-            cat.Name = "0";
-        }
+        
+        if (catNameComposite.Length >= 2)
+            rollCount = Convert.ToInt32(catNameComposite[1]) + 1;
+        
+        cat.Name = $"{Config.GetString("playerName")} | {rollCount}";
     }
+
+    private void UpdateCatOnServer(GameChar cat)
+    {
+        string call = server.CreateCatState(Guid.Parse(Config.GetString("playerId")), cat);
+        log(call);
+        
+        server.ActivateClient(Config);
+        server.UpdateCat(call);
+    }
+
     protected void OnKeyDown(KeyEventArgs e)
     {
         if (!IsEnabled) return;
         if ((e.Scancode == SDL_Scancode.P || e.Scancode == SDL_Scancode.O) && !e.IsRepeat)
         {
-            log($"🔵 [Reroll] Клавиша {e.Key} нажата! (111 = O, 112 = P)");
-            List<GameChar> cats = GameWorld.Current.GetCats(); // get all alive cats
+            log($"🔵 [Reroll] Key {e.Key} pressed! (111 = O, 112 = P)");
+            List<GameChar> cats = GetAdventureCats();
 
-            /* --- delete cats that is not in party --- */
-            for (int i = 0; i < cats.Count; i++)
-            {
-                if (!cats[i].IsInAdventureParty)
-                    cats.RemoveAt(i);
-            }
-
-            /* --- processing --- */
-            if (e.Scancode == SDL_Scancode.O)
-                RollCat(cats[0]);
-            else if (e.Scancode == SDL_Scancode.P)
-                RollCat(cats[1]);
-
+            if (e.Scancode == SDL_Scancode.O) RollCat(cats[0]);
+            else if (e.Scancode == SDL_Scancode.P) RollCat(cats[1]);
         }
     }
 
-    private void OnFrame(HouseUpdateEvent e)
+    internal static unsafe class Exports
     {
-        if (!IsEnabled) return;
+        private static readonly RerollMod _mod = new();
+
+        [UnmanagedCallersOnly(EntryPoint = "MewMod_GetInfo")]
+        public static ModInfo* GetInfo() { try { return ModInfoHelper.GetInfo(_mod); } catch { return null; } }
+
+        [UnmanagedCallersOnly(EntryPoint = "MewMod_Init")]
+        public static void Init(MewgenicsApi* api) { try { _mod.InternalLoad(api); } catch { } }
+
+        [UnmanagedCallersOnly(EntryPoint = "MewMod_Enable")]
+        public static void Enable() { try { _mod.InternalEnable(); } catch { } }
+
+        [UnmanagedCallersOnly(EntryPoint = "MewMod_Disable")]
+        public static void Disable() { try { _mod.InternalDisable(); } catch { } }
+
+        [UnmanagedCallersOnly(EntryPoint = "MewMod_ConfigReload")]
+        public static void ConfigReload() { try { _mod.InternalConfigReload(); } catch { } }
     }
-}
-
-
-internal static unsafe class Exports
-{
-    private static readonly RerollMod _mod = new();
-
-    [UnmanagedCallersOnly(EntryPoint = "MewMod_GetInfo")]
-    public static ModInfo* GetInfo() { try { return ModInfoHelper.GetInfo(_mod); } catch { return null; } }
-
-    [UnmanagedCallersOnly(EntryPoint = "MewMod_Init")]
-    public static void Init(MewgenicsApi* api) { try { _mod.InternalLoad(api); } catch { } }
-
-    [UnmanagedCallersOnly(EntryPoint = "MewMod_Enable")]
-    public static void Enable() { try { _mod.InternalEnable(); } catch { } }
-
-    [UnmanagedCallersOnly(EntryPoint = "MewMod_Disable")]
-    public static void Disable() { try { _mod.InternalDisable(); } catch { } }
-
-    [UnmanagedCallersOnly(EntryPoint = "MewMod_ConfigReload")]
-    public static void ConfigReload() { try { _mod.InternalConfigReload(); } catch { } }
 }
