@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.Json;
 
 namespace RerollMod;
 
@@ -326,6 +327,8 @@ public class RerollMod : MewgenicsMod
         Config.GetString("playerName", RandomString(5));
         Config.GetString("server", string.Empty);
         Config.GetString("key", string.Empty);
+        
+        server.ActivateClient(Config);
     }
 
     private void OnHouseUpdate(HouseUpdateEvent @event)
@@ -467,13 +470,17 @@ public class RerollMod : MewgenicsMod
             rollCount = Convert.ToInt32(catNameComposite[1]) + 1;
         
         cat.Name = $"{Config.GetString("playerName")} | {rollCount}";
+        
+        server.ActivateClient(Config);
+        server.RollCat(
+            Guid.Parse(Config.GetString("playerId")),
+            cat);
     }
 
     private void UpdateCatOnServer(GameChar cat)
     {
         string call = server.CreateCatState(
-            Guid.Parse(Config.GetString("playerId")), 
-            Config.GetString("playerName"), 
+            Guid.Parse(Config.GetString("playerId")),
             cat);
         
         log(call);
