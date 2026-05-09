@@ -376,7 +376,7 @@ public class RerollMod : MewgenicsMod
         {
             var catNameComposite = cat.Name.Split(" | ");
             if (catNameComposite.Length < 2)
-                cat.Name = $"{cat.Name} | 0";
+                cat.Name = $"{Config.GetString("playerName")} | 0";
             
             cat.Name = $"{cat.Name} | L";
         }
