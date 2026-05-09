@@ -95,13 +95,13 @@ public class RerollMod : MewgenicsMod
             "Teach", "HomingBlasts", "Replicate", "Magnify", "TriAttack"
         ];
 
-        abilities["tank"] = ["Taunt", "HeadButt", "ThrowShield", "ChewCud", "AssBlast", "Chew", "BatterUp",
-            "BackBreaker", "Intimidate", "Toss", "NubbyToss", "BellyFlop", "TankTrample", "TankSwap", "ToTheRescue",
+        abilities["tank"] = ["HeadButt", "ThrowShield", "ChewCud", "AssBlast", "Chew", "BatterUp",
+            "BackBreaker", "Intimidate", "Toss", "BellyFlop", "TankTrample", "TankSwap", "ToTheRescue",
             "TankTantrum", "Earthquake", "RockToss", "BarbedWire", "DrawAttention", "BowlOver",
             "Clap", "TankRockSong", "RockCrusher", "BodyGuard", "Gore", "RockBlast", "RockTomb",
             "BearHug", "Fissure", "BigRock", "FlipFlop", "Lunge", "Nudge",
             "StoneGaze", "Medusa", "Anchor", "EatRock", "PlantFeet", "IronHead", "GangUp", "Aftershock",
-            "SteelSkin", "FaultLine", "Demolish", "FollowUpDash", "PushThrough", "Spur",
+            "SteelSkin", "FaultLine", "Demolish", "PushThrough", "Spur",
             "Supper", "FullForce", "Sandstorm", "Thicken"
         ];
 
@@ -322,6 +322,7 @@ public class RerollMod : MewgenicsMod
         GameEvents.OnHouseUpdate += OnHouseUpdate;
         
         _runActive = Config.GetBool("runActive");
+        Config.GetInt("rerollCount", 0);
         Config.GetString("playerId", Guid.NewGuid().ToString());
         Config.GetString("playerName", RandomString(5));
         Config.GetString("server", string.Empty);
