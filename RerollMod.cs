@@ -373,8 +373,14 @@ public class RerollMod : MewgenicsMod
 
         var cats = GetAdventureCats();
         foreach (var cat in cats)
+        {
+            var catNameComposite = cat.Name.Split(" | ");
+            if (catNameComposite.Length < 2)
+                cat.Name = $"{cat.Name} | 0";
+            
             cat.Name = $"{cat.Name} | L";
-        
+        }
+
         UpdateCats();
     }
 
