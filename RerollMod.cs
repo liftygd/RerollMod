@@ -413,8 +413,8 @@ public class RerollMod : MewgenicsMod
             StringBuilder catName = new StringBuilder();
             
             int rollCount = 0;
-            if (catNameComposite.Length >= 2)
-                rollCount = Convert.ToInt32(catNameComposite[1]);
+            if (catNameComposite.Length >= 2 && Int32.TryParse(catNameComposite[1], out var roll))
+                rollCount = roll;
 
             catName.Append($"{Config.GetString("playerName")} | {rollCount}");
 
@@ -466,8 +466,8 @@ public class RerollMod : MewgenicsMod
         cat.Spell1 = sp_n;
         cat.Passive0 = pa_n;
         
-        if (catNameComposite.Length >= 2)
-            rollCount = Convert.ToInt32(catNameComposite[1]) + 1;
+        if (catNameComposite.Length >= 2 && Int32.TryParse(catNameComposite[1], out var roll))
+            rollCount = roll + 1;
         
         cat.Name = $"{Config.GetString("playerName")} | {rollCount}";
         
