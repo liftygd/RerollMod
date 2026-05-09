@@ -191,9 +191,7 @@ public class RerollMod : MewgenicsMod
             "NaturalHealing", "LongShot", "FastFooted", "Slugger", "Pulp", "Amplify", "DeathBoon",
             "SantaSangre", "Untouched", "Daunt", "AnimalHandler", "WhipCracker", "PressurePoints", "Gassy",
             "Dealer", "Patience", "Wiggly", "MiniMe", "BareMinimum", "Unrestricted", "DeathsDoor", "OverConfident",
-            "SerialKiller", "StrengthInNumbers", "FightersSoul", "HuntersSoul", "MagesSoul", "ClericsSoul",
-            "TanksSoul", "ThiefsSoul", "MonksSoul", "ButchersSoul", "DruidsSoul", "TinkerersSoul", "NecromancersSoul",
-            "PsychicsSoul", "Charming", "FirstImpression", "Scavenger", "ZenkaiBoost", "Protection", "Rockin",
+            "SerialKiller", "StrengthInNumbers", "Charming", "FirstImpression", "Scavenger", "ZenkaiBoost", "Protection", "Rockin",
             "Mania", "Lucky", "OneEighty", "JestersSoul", "HotBlooded", "ToxicBlooded", "BloodBlooded", "VoidSoul"
         ];
 
