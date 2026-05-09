@@ -47,9 +47,9 @@ public class RerollMod : MewgenicsMod
             "Uppercut", "Counter", "TailWhip", "Poke", "Nip", "Push", "FalconPunch", "Exert", "Enrage", "Tumble",
             "Confront", "Juiced", "CosmicPunch", "FighterTaunt", "GravitySlam", "Berserk", "BerserkDash",
             "Challenge", "Slap", "Stoopzerk", "LastThought", "SleeperHold", "Grapple", "ThinkTooHard", "Zoomzerk",
-            "Reposition", "FighterBonusThrow", "Bloodzerk", "Lacerate", "ExhaustingBlow", "ChaosRampage", "MeteorSlam",
+            "Reposition", "Bloodzerk", "Lacerate", "ExhaustingBlow", "ChaosRampage", "MeteorSlam",
             "MuscleMemory", "Inhale", "OneTwoPunch", "TeamSpin", "TeamFlex", "Huddle", "RagePunch", "BreakingPoint",
-            "AssertDominance", "DumbMove", "ReflexPunchJab", "SuckerPunch", "Stick", "Hurl", "BigPunch", "Ram"
+            "AssertDominance", "DumbMove", "SuckerPunch", "Stick", "Hurl", "BigPunch", "Ram"
         ];
 
         abilities["colorless"] = [
@@ -74,7 +74,7 @@ public class RerollMod : MewgenicsMod
         ];
 
         abilities["hunter"] = ["LineShot", "HailOfNails", "SpawnMaggotFriend", "SpawnPooterFriend",
-            "Marked", "ScatterShot", "BrambleShot", "BearTrap", "Harpoon", "TwinShot", "CrossShot",
+            "Marked", "ScatterShot", "BrambleShot", "BearTrap", "TwinShot", "CrossShot",
             "SpawnBaitTrap", "BombShot", "SummonBrambles", "FireShot", "TrailBlazer", "FocusShot",
             "Shards", "TerrainWalk", "Extend", "ChaosShot", "NeedleShot", "SpikeTrap", "FleaShot",
             "WebTrap", "LastHit", "CupidsArrow", "ArrowFlurry", "HeavyShot", "StakeOut",
@@ -86,8 +86,8 @@ public class RerollMod : MewgenicsMod
 
         abilities["mage"] = [
             "Surf", "Bolt", "Fireball", "FreezeRay", "Blast", "MagicMissile", "WallOfFire",
-            "MeteorStorm", "MegaBlast", "Slow", "Enlarge", "WindSlash", "Warp", "MageTeleport", "MageSwap",
-            "Absorb", "IceArmor", "FireArmor", "ManaMeld", "Inspire", "Telefrag", "ChaosTeleport", "CryoHeal",
+            "MeteorStorm", "MegaBlast", "Slow", "WindSlash", "Warp", "MageTeleport", "MageSwap",
+            "Absorb", "FireArmor", "ManaMeld", "Inspire", "Telefrag", "ChaosTeleport", "CryoHeal",
             "Gust", "Blizzard", "Inferno", "Thunderburst", "DealWithTheDevil", "ForbiddenFlame",
             "ForbiddenFlood", "WaterSphere", "ChainLightning", "Shatter", "ForbiddenFulmination",
             "FireBolt", "IcicleTaser", "FreezerBurn", "Corrupt", "Jolt", "Smolder", "FireSurge",
@@ -96,13 +96,12 @@ public class RerollMod : MewgenicsMod
         ];
 
         abilities["tank"] = ["Taunt", "HeadButt", "ThrowShield", "ChewCud", "AssBlast", "Chew", "BatterUp",
-            "BackBreaker", "Intimidate", "Toss", "BonusToss", "NubbyToss", "BellyFlop",
-            "ToadJump_BasicMove", "BellyFlop_BasicMove", "TankTrample", "TankSwap", "ToTheRescue",
+            "BackBreaker", "Intimidate", "Toss", "NubbyToss", "BellyFlop", "TankTrample", "TankSwap", "ToTheRescue",
             "TankTantrum", "Earthquake", "RockToss", "BarbedWire", "DrawAttention", "BowlOver",
             "Clap", "TankRockSong", "RockCrusher", "BodyGuard", "Gore", "RockBlast", "RockTomb",
-            "SwapPositions_WideLoad", "BearHug", "Fissure", "BigRock", "FlipFlop", "Lunge", "Nudge",
+            "BearHug", "Fissure", "BigRock", "FlipFlop", "Lunge", "Nudge",
             "StoneGaze", "Medusa", "Anchor", "EatRock", "PlantFeet", "IronHead", "GangUp", "Aftershock",
-            "SteelSkin", "FaultLine", "Demolish", "FollowUpDash", "CatapultJump", "PushThrough", "Spur",
+            "SteelSkin", "FaultLine", "Demolish", "FollowUpDash", "PushThrough", "Spur",
             "Supper", "FullForce", "Sandstorm", "Thicken"
         ];
 
@@ -214,13 +213,13 @@ public class RerollMod : MewgenicsMod
 
         passives["mage"] = [
             "Micronaps", "HolyMantel", "Shrapnel", "BurningPaws", "LightningPaws", "IcePaws", "PawMissile",
-            "Overload", "ChargeUp", "DeathChill", "Recharged", "EnergyStorm", "FireArmor", "IceArmor",
+            "Overload", "ChargeUp", "Recharged", "EnergyStorm", "FireArmor", "IceArmor",
             "Resonance", "LearnFromMe", "LightningArmor", "LongCast", "LightUpTheStage", "ElementalAttunement",
             "LatentEnergy", "Five", "MagicGuru", "One", "Two", "Four"
         ];
 
         passives["tank"] = [
-            "Thorns", "HeavyHanded", "SlackOff", "Scabs", "EyeCatchin", "ThunderThighs", "Plow",
+            "Thorns", "HeavyHanded", "SlackOff", "Scabs", "ThunderThighs", "Plow",
             "PetRocks", "ToadStyle", "ChainKnockback", "ProtectiveAura", "Wrestlemaniac", "MountainForm",
             "HomeRun", "RockAspect", "WideLoad", "HardHead", "MyLeg", "Hardy", "SlowAndSteady", "FollowUp",
             "CatAPult", "ShovingMatch", "Stoic", "PriorityTarget"
